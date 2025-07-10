@@ -12,9 +12,3 @@ There are many unimplemented features plus possible bugs I have not seen.
 2. Regroup some repetitive stuff into `./utils/`, like `embedBuilder`, `formatGuess`, `timestamp`, `validateWord`, and `fileUtils`. 
 3. A better way to actually play the game. (I don't like having to click buttons and all. Remnants of AttachmentBuilder are present in some files because I was contemplating having to use an interactive image that looks like the game itself. **I'm looking for ideas, please suggest or submit pull request**.) 
 4. Bug hunting idk.
-
-Persistent words added.
-- Stored in `./models/usedDailyWords.json`.
-- Handled by `./models/daily.js`.
-
-Grouped interactions per command.
