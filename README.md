@@ -1,4 +1,4 @@
-![version](https://img.shields.io/badge/version-0.2.0-blue)
+![version](https://img.shields.io/badge/version-0.2.1-blue)
 
 # discord-lirdle
 lirdle.com (wordle, one lie per line) integrated as a discord.js application.

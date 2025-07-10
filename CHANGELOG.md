@@ -4,3 +4,6 @@
 
 ## [0.2.0] - 2025-07-10
 - Updated version to 0.2.0
+
+## [0.2.1] - 2025-07-10
+- Updated version to 0.2.1
