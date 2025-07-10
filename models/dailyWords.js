@@ -1,1 +1,1 @@
-export const DAILY_LIRDLE = 'liken';
+export const DAILY_LIRDLE = 'notch';

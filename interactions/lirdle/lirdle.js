@@ -5,7 +5,7 @@ import {
 	EmbedBuilder,
 	MessageFlags,
 } from 'discord.js';
-import { startLirdleGame, activeGames } from '../models/lirdle/model.js';
+import { startLirdleGame, activeGames } from '../../models/lirdle/model.js';
 
 export const run = async (client, interaction) => {
 	try {

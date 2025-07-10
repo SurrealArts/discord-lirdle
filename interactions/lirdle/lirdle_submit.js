@@ -1,4 +1,4 @@
-import { submitGuess, activeGames } from '../models/lirdle/model.js';
+import { submitGuess, activeGames } from '../../models/lirdle/model.js';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,

@@ -1,28 +1,51 @@
 import { readdirSync } from 'fs';
+import path from 'path';
+import { pathToFileURL } from 'url';
 
-const interactionFiles = readdirSync('./interactions')
-	.filter((file) => file.endsWith('.js'));
+function getInteractionFiles(dir) {
+	const entries = readdirSync(dir, { withFileTypes: true });
+	const files = [];
+
+	for (const entry of entries) {
+		const fullPath = path.join(dir, entry.name);
+		if (entry.isDirectory()) {
+			const subFiles = getInteractionFiles(fullPath);
+			files.push(...subFiles);
+		} else if (entry.isFile() && entry.name.endsWith('.js')) {
+			files.push(fullPath);
+		}
+	}
+
+	return files;
+}
+
+const interactionFiles = getInteractionFiles('./interactions');
 
 export default async (client, interaction) => {
 	try {
-		let fileName;
+		let fileMatch;
 
 		if (interaction.isChatInputCommand()) {
-			fileName = `${interaction.commandName}.js`;
+			fileMatch = interactionFiles.find(file => 
+				path.basename(file) === `${interaction.commandName}.js`
+			);
 		} else if (interaction.isButton() || interaction.isModalSubmit()) {
 			const [prefix, action] = interaction.customId.split('_');
-			fileName = `${prefix}_${action}.js`;
+			fileMatch = interactionFiles.find(file => 
+				path.basename(file) === `${prefix}_${action}.js`
+			);
 		} else {
 			// For other types of interactions (TBA);
 			return;
 		}
 
-		if (!interactionFiles.includes(fileName)) {
-			console.error(`[InteractionCreate] The interaction file ${fileName} was not found.`);
+		if (!fileMatch) {
+			console.error(`[InteractionCreate] The interaction file was not found for interaction: ${interaction.customId || interaction.commandName}`);
 			return;
 		}
 
-		const { run } = await import(`../interactions/${fileName}`);
+		const moduleURL = pathToFileURL(fileMatch);
+		const { run } = await import(moduleURL.href);
 		await run(client, interaction);
 	} catch (err) {
 		console.error('[InteractionCreate] Error handling interaction:', err);
