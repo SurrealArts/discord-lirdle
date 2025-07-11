@@ -1,4 +1,4 @@
-import { activeGames, submitGuess } from '../../models/lirdle/model.js';
+import { activeGames, submitGuess } from '../../models/wordle/model.js';
 import { 
 	ActionRowBuilder,
 	ButtonBuilder,
@@ -68,13 +68,13 @@ export const run = async (client, interaction) => {
 	} else if (game.messageIds[page]) {
 		const message = await interaction.channel.messages.fetch(game.messageIds[page]);
 		const original = message.embeds[0];
-		const embed = createResultEmbed(original.title ?? 'Lirdle Progress', description, 0x5865F2);
+		const embed = createResultEmbed(original.title ?? 'Wordle Progress', description, 0x5865F2);
 		await message.edit({ embeds: [embed] });
 	} else {
-		const embed = createResultEmbed('Lirdle Progress', description, 0x5865F2);
+		const embed = createResultEmbed('Wordle Progress', description, 0x5865F2);
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
-				.setCustomId(`lirdle_guess_${userId}`)
+				.setCustomId(`wordle_guess_${userId}`)
 				.setLabel('Guess')
 				.setStyle(ButtonStyle.Primary)
 		);

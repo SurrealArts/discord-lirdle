@@ -1,4 +1,4 @@
-import { readdir, stat, writeFile, readFile } from 'fs/promises';
+import { readdir, stat, writeFile } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { generateDailyWord } from './models/daily.js';
@@ -6,7 +6,6 @@ import { generateDailyWord } from './models/daily.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const modelsPath = path.join(__dirname, './models');
 const dailyWordsPath = path.join(modelsPath, 'dailyWords.js');
-const usedWordsPath = path.join(modelsPath, 'usedDailyWords.js');
 
 let lastDate = new Date().toDateString();
 
@@ -25,32 +24,10 @@ async function refreshDailyWordsIfNeeded() {
 
 	lastDate = currentDate;
 
-	let oldWords = [];
-	try {
-		const content = await readFile(dailyWordsPath, 'utf-8');
-		const match = content.match(/export const DAILY_WORDS = (\[.*\]);/s);
-
-		if (match) {
-			oldWords = JSON.parse(match[1]);
-		}
-	} catch {
-		oldWords = [];
-	}
-
-	if (oldWords.length > 0) {
-		const usedPath = usedWordsPath;
-		const usedContent = await readFile(usedPath, 'utf-8').catch(() => 'export const USED_DAILY_WORDS = [];\n');
-		const usedMatch = usedContent.match(/export const USED_DAILY_WORDS = (\[.*\]);/s);
-
-		let usedWords = usedMatch ? JSON.parse(usedMatch[1]) : [];
-		usedWords.push(...oldWords);
-		await writeFile(usedPath, `export const USED_DAILY_WORDS = ${JSON.stringify(usedWords, null, 2)};\n`);
-	}
-
 	const folders = await readdir(modelsPath, { withFileTypes: true });
 	const modelFolders = folders.filter(dirent =>
 		dirent.isDirectory() &&
-		dirent.name !== 'usedDailyWords' &&
+		dirent.name !== 'stats' &&
 		dirent.name !== 'dailyWords'
 	);
 

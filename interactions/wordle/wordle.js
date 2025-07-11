@@ -5,9 +5,9 @@ import {
 	EmbedBuilder,
 	MessageFlags,
 } from 'discord.js';
-import { startLirdleGame, activeGames } from '../../models/lirdle/model.js';
+import { startWordleGame, activeGames } from '../../models/wordle/model.js';
 import { hasSolvedToday, getUserStats } from '../../models/stats.js';
-import { DAILY_LIRDLE } from '../../models/dailyWords.js';
+import { DAILY_WORDLE } from '../../models/dailyWords.js';
 import { getTodayISO, isSameDay } from '../../utils/timestamp.js';
 import { readJson } from '../../utils/fileUtils.js';
 
@@ -19,18 +19,18 @@ export const run = async (client, interaction) => {
 		if (!useRandom) {
 			const today = getTodayISO();
 			const allEntries = readJson('./models/stats.json').filter(
-				entry => entry.gameType === 'lirdle' && isSameDay(entry.date, today)
+				entry => entry.gameType === 'wordle' && isSameDay(entry.date, today)
 			);
 
-			const youSolved = hasSolvedToday(userId, 'lirdle');
+			const youSolved = hasSolvedToday(userId, 'wordle');
 
 			if (youSolved) {
-				const { winCount, streak } = getUserStats(userId, 'lirdle');
+				const { winCount, streak } = getUserStats(userId, 'wordle');
 
 				const embed = new EmbedBuilder()
-					.setTitle('Lirdle (Daily)')
+					.setTitle('Wordle (Daily)')
 					.setDescription(
-						`✅ You've already solved today's Lirdle!\n\n🧠 Word: \`${DAILY_LIRDLE}\`\n🏆 Wins: ${winCount}\n🔥 Streak: ${streak} day${streak > 1 ? 's' : ''}`
+						`✅ You've already solved today's Wordle!\n\n🧠 Word: \`${DAILY_WORDLE}\`\n🏆 Wins: ${winCount}\n🔥 Streak: ${streak} day${streak > 1 ? 's' : ''}`
 					)
 					.setColor(0x2F3136);
 
@@ -40,12 +40,12 @@ export const run = async (client, interaction) => {
 
 			if (allEntries.length > 0) {
 				const { userId: winnerId, word } = allEntries[0];
-				const { winCount, streak } = getUserStats(winnerId, 'lirdle');
+				const { winCount, streak } = getUserStats(winnerId, 'wordle');
 
 				const embed = new EmbedBuilder()
-					.setTitle('Lirdle (Daily)')
+					.setTitle('Wordle (Daily)')
 					.setDescription(
-						`🟢 Today's Lirdle has already been solved!\n\n👤 Solver: <@${winnerId}>\n🧠 Word: \`${word}\`\n🏆 Total Wins: ${winCount}\n🔥 Streak: ${streak} day${streak > 1 ? 's' : ''}`
+						`🟢 Today's Wordle has already been solved!\n\n👤 Solver: <@${winnerId}>\n🧠 Word: \`${word}\`\n🏆 Total Wins: ${winCount}\n🔥 Streak: ${streak} day${streak > 1 ? 's' : ''}`
 					)
 					.setColor(0x2F3136);
 
@@ -55,18 +55,18 @@ export const run = async (client, interaction) => {
 		}
 
 		// eslint-disable-next-line no-unused-vars
-		const game = await startLirdleGame(userId, useRandom);
+		const game = await startWordleGame(userId, useRandom);
 
 		// const attachment = game.image;
 		const embed = new EmbedBuilder()
-			.setTitle(useRandom ? 'Lirdle (Random)' : 'Lirdle (Daily)')
+			.setTitle(useRandom ? 'Wordle (Random)' : 'Wordle (Daily)')
 			.setDescription(`Start guessing by clicking the button below!`)
 			// .setImage(`attachment://${attachment.name}`)
 			.setColor(0x5865F2);
 
 		const row = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
-				.setCustomId(`lirdle_guess_${userId}`)
+				.setCustomId(`wordle_guess_${userId}`)
 				.setLabel('Guess')
 				.setStyle(ButtonStyle.Primary),
 		);
@@ -84,7 +84,7 @@ export const run = async (client, interaction) => {
 		}
 
 	} catch (error) {
-		console.error('[Lirdle] Error starting Lirdle:', error);
+		console.error('[Wordle] Error starting Lirdle:', error);
 		await interaction.reply({
 			content: 'There was an error starting the Lirdle game.',
 			flags: MessageFlags.Ephemeral,

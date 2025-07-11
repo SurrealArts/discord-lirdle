@@ -1,6 +1,6 @@
 // import { AttachmentBuilder } from 'discord.js';
 import { WORDS, OTHERWORDS } from '../words.js';
-import { DAILY_LIRDLE } from '../dailyWords.js';
+import { DAILY_WORDLE } from '../dailyWords.js';
 import { getRandomWord } from '../randomizer.js';
 import { createWordSets, validateGuess } from '../../utils/validateWord.js';
 import { formatGuessBlock } from '../../utils/formatGuess.js';
@@ -12,8 +12,8 @@ const { mainSet: WORDS_SET, extraSet: OTHERWORDS_SET } = createWordSets(WORDS, O
 
 export const activeGames = new Map();
 
-export async function startLirdleGame(userId, useRandom) {
-	const answer = useRandom ? getRandomWord() : DAILY_LIRDLE;
+export async function startWordleGame(userId, useRandom) {
+	const answer = useRandom ? getRandomWord() : DAILY_WORDLE;
 
 	// const blankGuesses = Array.from({ length: 6 }, () => ({
 	// 	word: '',
@@ -29,7 +29,6 @@ export async function startLirdleGame(userId, useRandom) {
 		isRandom: useRandom,
 		messageIds: [],
 		isComplete: false,
-		lieMap: new Map(),
 	});
 
 	return {
@@ -51,7 +50,7 @@ export function submitGuess(userId, guess, force = false) {
 	if (game.guesses.some(g => g.word === word)) return { error: 'You have already guessed that word.' };
 	if (validation.status === 'extra' && !force) return { needsConfirmation: true, word };
 
-	const feedback = getFeedback(word, game.answer.toUpperCase(), game);
+	const feedback = getFeedback(word, game.answer.toUpperCase());
 	game.guesses.push({ word, feedback });
 
 	const isCorrect = word === game.answer.toUpperCase();
@@ -71,7 +70,7 @@ export function submitGuess(userId, guess, force = false) {
 
 	if (isCorrect) {
 		game.isComplete = true;
-		if (!game.isRandom) recordDailyWin(userId, 'lirdle', game.answer);
+		if (!game.isRandom) recordDailyWin(userId, 'wordle', game.answer);
 	
 		return {
 			isCorrect: true,
@@ -87,13 +86,12 @@ export function submitGuess(userId, guess, force = false) {
 	};
 }
 
-function getFeedback(guess, answer, game) {
+function getFeedback(guess, answer) {
 	const result = Array(5).fill('⬛');
 	const answerArr = answer.split('');
 	const guessArr = guess.split('');
 	const used = Array(5).fill(false);
 
-	// Truth feedback part
 	for (let i = 0; i < 5; i++) {
 		if (guessArr[i] === answerArr[i]) {
 			result[i] = '🟩';
@@ -111,25 +109,6 @@ function getFeedback(guess, answer, game) {
 			used[index] = true;
 		}
 	}
-
-	// Devious lie part. Catches duplicates even if originally disallowed. Will implement soon.
-	let lieIndex;
-	if (game.lieMap.has(guess)) {
-		lieIndex = game.lieMap.get(guess);
-	} else {
-		lieIndex = Math.floor(Math.random() * 5);
-		game.lieMap.set(guess, lieIndex);
-	}
-
-	const originalColor = result[lieIndex];
-	const miscolors = {
-		'🟩': ['🟨', '⬛'],
-		'🟨': ['⬛', '🟩'],
-		'⬛': ['🟩', '🟨'],
-	};
-
-	const fakeColor = miscolors[originalColor][Math.floor(Math.random() * 2)];
-	result[lieIndex] = fakeColor;
 
 	return result.join('');
 }

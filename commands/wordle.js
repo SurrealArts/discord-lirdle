@@ -1,8 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 
 export const data = new SlashCommandBuilder()
-	.setName('lirdle')
-	.setDescription('Play Lirdle (daily or random)')
+	.setName('wordle')
+	.setDescription('Play Wordle (daily or random)')
 	.addBooleanOption((option) =>
 		option
 			.setName('random')

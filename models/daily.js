@@ -4,7 +4,7 @@ import { readFile, writeFile } from 'fs/promises';
 import { WORDS } from './words.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const usedWordsPath = path.join(__dirname, 'usedDailyWords.json');
+const usedWordsPath = path.join(__dirname, 'stats.json');
 
 export async function generateDailyWord(modelName) {
 	let usedRecords = [];
