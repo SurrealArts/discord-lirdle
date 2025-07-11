@@ -1,6 +1,6 @@
 {
   "name": "discord-lirdle",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "lirdle.com (wordle, one lie per line) integrated as a discord.js application.",
   "type": "module",
   "main": "index.js",
